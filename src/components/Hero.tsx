@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SparklesCore } from '@/components/ui/sparkles';
 
 export default function Hero() {
   const [loaded, setLoaded] = useState(false);
@@ -13,30 +14,26 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen hero-gradient overflow-hidden flex flex-col items-center justify-center">
-      {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-70 z-0"></div>
-      
-      {/* Floating particles or subtle elements */}
-      <div className="absolute inset-0 z-0">
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white/5"
-            style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animation: `pulse ${Math.random() * 3 + 2}s infinite alternate`,
-              opacity: Math.random() * 0.5 + 0.2,
-            }}
-          />
-        ))}
+    <div className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center bg-black">
+      {/* Particles Background */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <SparklesCore
+          id="tsparticlesfullpage"
+          background="transparent"
+          minSize={0.6}
+          maxSize={1.4}
+          particleDensity={100}
+          className="w-full h-full"
+          particleColor="#FFFFFF"
+          speed={0.8}
+        />
       </div>
-
+      
+      {/* Additional gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/50 to-black/90 opacity-90 z-10"></div>
+      
       {/* Main content */}
-      <div className="container px-4 sm:px-6 mx-auto z-10 flex flex-col items-center">
+      <div className="container px-4 sm:px-6 mx-auto z-20 flex flex-col items-center">
         <h2 
           className={cn(
             "text-xs sm:text-sm uppercase tracking-widest text-gray-400 mb-5 opacity-0",
@@ -75,8 +72,20 @@ export default function Hero() {
           style={{ animationDelay: "0.7s" }}
         >
           <Link to="/signin">
-            <Button className="glass-morphism text-white hover:bg-white/10 px-8 py-6 text-lg">
-              Try Lexia Now
+            <Button className="glass-morphism text-white hover:bg-white/10 px-8 py-6 text-lg relative group overflow-hidden">
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100">
+                <SparklesCore
+                  id="buttonSparkles"
+                  background="transparent"
+                  minSize={0.4}
+                  maxSize={1}
+                  particleDensity={50}
+                  className="w-full h-full"
+                  particleColor="#FFFFFF"
+                  speed={0.5}
+                />
+              </div>
+              <span className="relative z-10">Try Lexia Now</span>
             </Button>
           </Link>
         </div>
@@ -85,7 +94,7 @@ export default function Hero() {
       {/* Scroll indicator */}
       <div 
         className={cn(
-          "absolute bottom-8 opacity-0",
+          "absolute bottom-8 opacity-0 z-20",
           loaded && "animate-fade-in"
         )}
         style={{ animationDelay: "1s" }}
