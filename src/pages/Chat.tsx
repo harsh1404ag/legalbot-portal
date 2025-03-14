@@ -76,7 +76,7 @@ export default function Chat() {
 
   return (
     <div className="flex h-screen bg-black">
-      {/* Background particles with different colors */}
+      {/* Enhanced colorful background particles */}
       <div className="fixed inset-0 w-full h-full -z-10">
         <SparklesCore
           id="tsparticlesblue"
@@ -122,7 +122,7 @@ export default function Chat() {
           background="transparent"
           minSize={0.3}
           maxSize={1.1}
-          particleDensity={20}
+          particleDensity={30}
           className="w-full h-full"
           particleColor="#EF4444" // Red
           speed={0.6}
@@ -139,6 +139,59 @@ export default function Chat() {
           className="w-full h-full"
           particleColor="#8B5CF6" // Violet
           speed={0.7}
+        />
+      </div>
+      
+      {/* Added more colorful stars */}
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlesorange"
+          background="transparent"
+          minSize={0.4}
+          maxSize={1.0}
+          particleDensity={20}
+          className="w-full h-full"
+          particleColor="#F97316" // Orange
+          speed={0.45}
+        />
+      </div>
+      
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlesteal"
+          background="transparent"
+          minSize={0.3}
+          maxSize={0.9}
+          particleDensity={18}
+          className="w-full h-full"
+          particleColor="#14B8A6" // Teal
+          speed={0.55}
+        />
+      </div>
+      
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticleslime"
+          background="transparent"
+          minSize={0.2}
+          maxSize={0.8}
+          particleDensity={22}
+          className="w-full h-full"
+          particleColor="#84CC16" // Lime
+          speed={0.5}
+        />
+      </div>
+      
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlespink"
+          background="transparent"
+          minSize={0.3}
+          maxSize={1.0}
+          particleDensity={15}
+          className="w-full h-full"
+          particleColor="#EC4899" // Pink
+          speed={0.35}
         />
       </div>
       
@@ -188,7 +241,7 @@ export default function Chat() {
       
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 overflow-auto p-4">
+        <main className="flex-1 overflow-auto p-4 bg-neutral-900/50">
           <div className="max-w-3xl mx-auto">
             {messages.map((message) => (
               <div 
@@ -222,7 +275,7 @@ export default function Chat() {
                       "rounded-lg px-4 py-2 shadow-md",
                       message.role === "user" 
                         ? "bg-blue-600 text-white" 
-                        : "bg-neutral-800 text-white glass-morphism"
+                        : "bg-neutral-800/90 text-white glass-morphism"
                     )}
                   >
                     <p className="text-sm">{message.content}</p>
@@ -248,7 +301,7 @@ export default function Chat() {
                   <div className="flex h-8 w-8 rounded-full items-center justify-center bg-neutral-700">
                     <Bot className="h-5 w-5 text-white" />
                   </div>
-                  <div className="rounded-lg px-4 py-2 bg-neutral-800 text-white glass-morphism">
+                  <div className="rounded-lg px-4 py-2 bg-neutral-800/90 text-white glass-morphism">
                     <div className="flex space-x-2">
                       <div className="h-2 w-2 rounded-full bg-white animate-bounce" style={{ animationDelay: "0ms" }}></div>
                       <div className="h-2 w-2 rounded-full bg-white animate-bounce" style={{ animationDelay: "300ms" }}></div>
@@ -263,7 +316,7 @@ export default function Chat() {
           </div>
         </main>
         
-        <div className="p-4 border-t border-neutral-800 bg-neutral-900">
+        <div className="p-4 border-t border-neutral-800 bg-neutral-900/80">
           <div className="max-w-3xl mx-auto">
             <AIInputWithLoading 
               placeholder="Ask a legal question..."

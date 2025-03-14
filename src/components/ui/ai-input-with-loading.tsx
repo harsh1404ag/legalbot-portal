@@ -79,10 +79,10 @@ export function AIInputWithLoading({
             id={id}
             placeholder={placeholder}
             className={cn(
-              "max-w-xl bg-black/5 dark:bg-white/5 w-full rounded-3xl pl-6 pr-10 py-4",
-              "placeholder:text-black/70 dark:placeholder:text-white/70",
-              "border-none ring-black/30 dark:ring-white/30",
-              "text-black dark:text-white resize-none text-wrap leading-[1.2]",
+              "max-w-xl bg-neutral-800/80 dark:bg-neutral-800/80 w-full rounded-3xl pl-6 pr-10 py-4",
+              "placeholder:text-neutral-400 dark:placeholder:text-neutral-400",
+              "border-none ring-neutral-700 dark:ring-neutral-700",
+              "text-white dark:text-white resize-none text-wrap leading-[1.2]",
               `min-h-[${minHeight}px]`
             )}
             ref={textareaRef}
@@ -103,27 +103,27 @@ export function AIInputWithLoading({
             onClick={handleSubmit}
             className={cn(
               "absolute right-3 top-1/2 -translate-y-1/2 rounded-xl py-1 px-1",
-              submitted ? "bg-none" : "bg-black/5 dark:bg-white/5"
+              submitted ? "bg-none" : "bg-neutral-700/50 dark:bg-neutral-700/50"
             )}
             type="button"
             disabled={submitted}
           >
             {submitted ? (
               <div
-                className="w-4 h-4 bg-black dark:bg-white rounded-sm animate-spin transition duration-700"
+                className="w-4 h-4 bg-white dark:bg-white rounded-sm animate-spin transition duration-700"
                 style={{ animationDuration: "3s" }}
               />
             ) : (
               <CornerRightUp
                 className={cn(
-                  "w-4 h-4 transition-opacity dark:text-white",
+                  "w-4 h-4 transition-opacity text-white dark:text-white",
                   inputValue ? "opacity-100" : "opacity-30"
                 )}
               />
             )}
           </button>
         </div>
-        <p className="pl-4 h-4 text-xs mx-auto text-black/70 dark:text-white/70">
+        <p className="pl-4 h-4 text-xs mx-auto text-neutral-400 dark:text-neutral-400">
           {submitted ? "AI is thinking..." : "Ready to submit!"}
         </p>
       </div>
