@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, User, LogOut, PlusCircle, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AIInputWithLoading } from "@/components/ui/ai-input-with-loading";
+import { SparklesCore } from "@/components/ui/sparkles";
 
 interface Message {
   id: string;
@@ -34,13 +36,13 @@ export default function Chat() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!input.trim()) return;
+  const handleSendMessage = async (inputText: string) => {
+    if (!inputText.trim()) return;
 
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: input,
+      content: inputText,
       role: "user",
       timestamp: new Date(),
     };
@@ -72,17 +74,79 @@ export default function Chat() {
     }, 1500);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   return (
     <div className="flex h-screen bg-black">
+      {/* Background particles with different colors */}
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlesblue"
+          background="transparent"
+          minSize={0.6}
+          maxSize={1.4}
+          particleDensity={40}
+          className="w-full h-full"
+          particleColor="#0EA5E9" // Blue
+          speed={0.5}
+        />
+      </div>
+      
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlesgreen"
+          background="transparent"
+          minSize={0.4}
+          maxSize={1.2}
+          particleDensity={30}
+          className="w-full h-full"
+          particleColor="#10B981" // Green
+          speed={0.3}
+        />
+      </div>
+      
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlesyellow"
+          background="transparent"
+          minSize={0.5}
+          maxSize={1.3}
+          particleDensity={25}
+          className="w-full h-full"
+          particleColor="#F59E0B" // Yellow
+          speed={0.4}
+        />
+      </div>
+      
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlesred"
+          background="transparent"
+          minSize={0.3}
+          maxSize={1.1}
+          particleDensity={20}
+          className="w-full h-full"
+          particleColor="#EF4444" // Red
+          speed={0.6}
+        />
+      </div>
+      
+      <div className="fixed inset-0 w-full h-full -z-10">
+        <SparklesCore
+          id="tsparticlesviolet"
+          background="transparent"
+          minSize={0.2}
+          maxSize={1.0}
+          particleDensity={15}
+          className="w-full h-full"
+          particleColor="#8B5CF6" // Violet
+          speed={0.7}
+        />
+      </div>
+      
+      {/* Gradient overlay for better readability */}
+      <div className="fixed inset-0 bg-gradient-to-b from-black/30 via-black/70 to-black/90 -z-10"></div>
+      
       {/* Sidebar */}
-      <div className="hidden md:flex w-64 flex-col bg-neutral-900 border-r border-neutral-800">
+      <div className="hidden md:flex w-64 flex-col bg-neutral-900 border-r border-neutral-800 z-10">
         <div className="p-4 border-b border-neutral-800 flex items-center justify-between">
           <Link to="/" className="text-xl font-bold text-white">LEXIA</Link>
           <Button variant="ghost" size="icon" className="rounded-full">
@@ -158,7 +222,7 @@ export default function Chat() {
                       "rounded-lg px-4 py-2 shadow-md",
                       message.role === "user" 
                         ? "bg-blue-600 text-white" 
-                        : "bg-neutral-800 text-white"
+                        : "bg-neutral-800 text-white glass-morphism"
                     )}
                   >
                     <p className="text-sm">{message.content}</p>
@@ -184,7 +248,7 @@ export default function Chat() {
                   <div className="flex h-8 w-8 rounded-full items-center justify-center bg-neutral-700">
                     <Bot className="h-5 w-5 text-white" />
                   </div>
-                  <div className="rounded-lg px-4 py-2 bg-neutral-800 text-white">
+                  <div className="rounded-lg px-4 py-2 bg-neutral-800 text-white glass-morphism">
                     <div className="flex space-x-2">
                       <div className="h-2 w-2 rounded-full bg-white animate-bounce" style={{ animationDelay: "0ms" }}></div>
                       <div className="h-2 w-2 rounded-full bg-white animate-bounce" style={{ animationDelay: "300ms" }}></div>
@@ -201,23 +265,12 @@ export default function Chat() {
         
         <div className="p-4 border-t border-neutral-800 bg-neutral-900">
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-end gap-2">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Ask a legal question..."
-                className="min-h-10 resize-none bg-neutral-800 border-neutral-700 focus:border-neutral-600"
-              />
-              <Button 
-                onClick={handleSendMessage} 
-                disabled={!input.trim() || loading}
-                size="icon"
-                className={input.trim() ? "bg-blue-600 hover:bg-blue-700" : ""}
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
+            <AIInputWithLoading 
+              placeholder="Ask a legal question..."
+              onSubmit={handleSendMessage}
+              loadingDuration={1500}
+              className="mb-2"
+            />
             <p className="text-xs text-gray-500 mt-2 text-center">
               LEXIA provides legal information, not legal advice. Always consult with a qualified attorney for legal advice.
             </p>
