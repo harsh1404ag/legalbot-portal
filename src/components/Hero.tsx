@@ -24,8 +24,48 @@ export default function Hero() {
           maxSize={1.4}
           particleDensity={100}
           className="w-full h-full"
-          particleColor="#FFFFFF"
+          particleColor="#8B5CF6" // Purple color instead of white
           speed={0.8}
+        />
+      </div>
+      
+      {/* Additional background particles with different colors */}
+      <div className="absolute inset-0 w-full h-full z-0" style={{ opacity: 0.7 }}>
+        <SparklesCore
+          id="tsparticlesred"
+          background="transparent"
+          minSize={0.4}
+          maxSize={1.0}
+          particleDensity={40}
+          className="w-full h-full"
+          particleColor="#D946EF" // Pink
+          speed={0.5}
+        />
+      </div>
+      
+      <div className="absolute inset-0 w-full h-full z-0" style={{ opacity: 0.6 }}>
+        <SparklesCore
+          id="tsparticlesblue"
+          background="transparent"
+          minSize={0.3}
+          maxSize={0.8}
+          particleDensity={30}
+          className="w-full h-full"
+          particleColor="#0EA5E9" // Blue
+          speed={0.3}
+        />
+      </div>
+      
+      <div className="absolute inset-0 w-full h-full z-0" style={{ opacity: 0.5 }}>
+        <SparklesCore
+          id="tsparticlesorange"
+          background="transparent"
+          minSize={0.2}
+          maxSize={0.6}
+          particleDensity={20}
+          className="w-full h-full"
+          particleColor="#F97316" // Orange
+          speed={0.4}
         />
       </div>
       

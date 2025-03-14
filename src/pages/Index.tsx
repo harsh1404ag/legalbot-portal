@@ -7,6 +7,8 @@ import { Shield, Scale, Clock, BookOpen, ChevronRight } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { cn } from "@/lib/utils";
+import { AccordionDemo } from "@/components/AccordionDemo";
+import { LogoSlider } from "@/components/LogoSlider";
 
 const features = [
   {
@@ -47,7 +49,7 @@ export default function Index() {
             maxSize={0.8}
             particleDensity={40}
             className="w-full h-full"
-            particleColor="#FFFFFF"
+            particleColor="#8B5CF6"
             speed={0.2}
           />
         </div>
@@ -81,6 +83,44 @@ export default function Index() {
         </div>
       </section>
       
+      {/* Logo Slider Section */}
+      <section className="py-16 px-4 relative">
+        <div className="absolute inset-0 w-full h-full" style={{ opacity: 0.15 }}>
+          <SparklesCore
+            id="logoSparkles"
+            background="transparent"
+            minSize={0.4}
+            maxSize={0.8}
+            particleDensity={30}
+            className="w-full h-full"
+            particleColor="#D946EF"
+            speed={0.2}
+          />
+        </div>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <LogoSlider />
+        </div>
+      </section>
+      
+      {/* FAQ Section */}
+      <section className="py-20 px-4 relative">
+        <div className="absolute inset-0 w-full h-full" style={{ opacity: 0.15 }}>
+          <SparklesCore
+            id="faqSparkles"
+            background="transparent"
+            minSize={0.4}
+            maxSize={0.8}
+            particleDensity={30}
+            className="w-full h-full"
+            particleColor="#0EA5E9"
+            speed={0.2}
+          />
+        </div>
+        <div className="max-w-3xl mx-auto relative z-10">
+          <AccordionDemo />
+        </div>
+      </section>
+      
       {/* CTA Section */}
       <section className="py-24 px-4 relative overflow-hidden">
         <div className="absolute inset-0 w-full h-full">
@@ -91,7 +131,7 @@ export default function Index() {
             maxSize={1.4}
             particleDensity={60}
             className="w-full h-full"
-            particleColor="#3182ce"
+            particleColor="#F97316"
             speed={0.4}
           />
         </div>
