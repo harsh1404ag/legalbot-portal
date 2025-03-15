@@ -120,7 +120,7 @@ export const SparklesCore = (props: ParticlesProps) => {
               number: {
                 density: {
                   enable: true,
-                  value: 800, // Changed from 'area' to 'value'
+                  area: 800, // Changed back to 'area' as per tsparticles v3 API
                 },
                 value: particleDensity || 80,
               },
@@ -132,7 +132,7 @@ export const SparklesCore = (props: ParticlesProps) => {
                 animation: {
                   enable: true,
                   speed: speed || 1,
-                  min: 0.1, // Changed from 'minimumValue' to 'min'
+                  minimumValue: 0.1, // Changed back to 'minimumValue' as per tsparticles v3 API
                 },
               },
               shape: {
