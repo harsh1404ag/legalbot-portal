@@ -3,15 +3,18 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, User, LogOut, PlusCircle, Bot } from "lucide-react";
+import { Send, User, LogOut, PlusCircle, Bot, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AIInputWithLoading } from "@/components/ui/ai-input-with-loading";
 import { SparklesCore } from "@/components/ui/sparkles";
+import { AzureAIConfigForm } from "@/components/ui/azure-ai-config-form";
+import { getAzureAIConfig, sendMessageToAzureAI } from "@/lib/azure-ai-client";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
   content: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   timestamp: Date;
 }
 
@@ -26,7 +29,14 @@ export default function Chat() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isAzureConfigured, setIsAzureConfigured] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Check if Azure AI is configured
+  useEffect(() => {
+    const config = getAzureAIConfig();
+    setIsAzureConfigured(!!config);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,6 +48,13 @@ export default function Chat() {
 
   const handleSendMessage = async (inputText: string) => {
     if (!inputText.trim()) return;
+
+    // Check if Azure AI is configured
+    const azureConfig = getAzureAIConfig();
+    if (!azureConfig) {
+      toast.error("Please configure Azure AI settings first");
+      return;
+    }
 
     // Add user message
     const userMessage: Message = {
@@ -51,27 +68,52 @@ export default function Chat() {
     setInput("");
     setLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responseMessages = [
-        "I've analyzed relevant case law and found three precedents that apply to your situation. The most applicable is Smith v. Jones (2019), which established...",
-        "Based on current regulations, you have several options available. I recommend considering...",
-        "Your contract clause appears to have a potential issue. According to legal standards in your jurisdiction...",
-        "The statute of limitations for this type of claim is typically 3 years from the date of discovery, but there are exceptions that might apply in your case..."
-      ];
+    try {
+      // Format messages for Azure AI
+      const promptMessages = messages
+        .slice(-10) // Limit context window
+        .concat(userMessage)
+        .map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }));
 
-      const randomResponse = responseMessages[Math.floor(Math.random() * responseMessages.length)];
+      // Add a system message if there isn't one
+      if (!promptMessages.some(msg => msg.role === "system")) {
+        promptMessages.unshift({
+          role: "system",
+          content: "You are LEXIA, a legal assistant AI that provides helpful, accurate, and thoughtful information about legal topics."
+        });
+      }
+
+      // Send request to Azure AI
+      const aiResponse = await sendMessageToAzureAI(promptMessages);
       
+      // Add AI response to messages
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: randomResponse,
+        content: aiResponse,
         role: "assistant",
         timestamp: new Date(),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error("Error getting AI response:", error);
+      toast.error("Failed to get AI response. Please check your Azure AI configuration.");
+      
+      // Add error message
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "I'm sorry, I encountered an error processing your request. Please check your Azure AI configuration and try again.",
+        role: "assistant",
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -228,7 +270,8 @@ export default function Chat() {
           </Button>
         </div>
         
-        <div className="p-4 border-t border-neutral-800">
+        <div className="p-4 border-t border-neutral-800 space-y-2">
+          <AzureAIConfigForm />
           <Button 
             variant="ghost" 
             className="w-full justify-start gap-2 text-red-400 hover:text-red-300 hover:bg-neutral-800"
@@ -241,6 +284,13 @@ export default function Chat() {
       
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
+        <header className="flex items-center justify-between p-4 border-b border-neutral-800 bg-neutral-900/80">
+          <h1 className="text-xl font-bold text-white">LEXIA AI</h1>
+          <div className="md:hidden">
+            <AzureAIConfigForm />
+          </div>
+        </header>
+        
         <main className="flex-1 overflow-auto p-4 bg-neutral-900/50">
           <div className="max-w-3xl mx-auto">
             {messages.map((message) => (
@@ -318,6 +368,17 @@ export default function Chat() {
         
         <div className="p-4 border-t border-neutral-800 bg-neutral-900/80">
           <div className="max-w-3xl mx-auto">
+            {!isAzureConfigured && (
+              <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-600/50 rounded-md text-yellow-300 text-sm">
+                <p className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  Please configure your Azure AI settings to start chatting.
+                </p>
+                <div className="mt-2">
+                  <AzureAIConfigForm />
+                </div>
+              </div>
+            )}
             <AIInputWithLoading 
               placeholder="Ask a legal question..."
               onSubmit={handleSendMessage}
