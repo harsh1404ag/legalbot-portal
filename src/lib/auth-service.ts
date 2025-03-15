@@ -48,7 +48,7 @@ export const signInWithGoogle = async (): Promise<AuthUser> => {
 
       // Initialize Google Sign-In
       window.google.accounts.id.initialize({
-        client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your Google Client ID
+        client_id: '255507081378-014jvpvdj6di2sqc4pa0s1aqk8c9gs8k.apps.googleusercontent.com', // Replace with your Google Client ID
         callback: async (response: any) => {
           if (response.credential) {
             // Decode the JWT token to get user information
