@@ -1,11 +1,13 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MessageList } from "@/components/chat/MessageList";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { BackgroundParticles } from "@/components/chat/BackgroundParticles";
 import { getAzureAIConfig, sendMessageToAzureAI } from "@/lib/azure-ai-client";
+import { isAuthenticated, getCurrentUser } from "@/lib/auth-service";
 import { toast } from "sonner";
 
 interface Message {
@@ -26,12 +28,40 @@ export default function Chat() {
   ]);
   const [loading, setLoading] = useState(false);
   const [isAzureConfigured, setIsAzureConfigured] = useState(false);
-
-  // Check if Azure AI is configured
+  const navigate = useNavigate();
+  
+  // Check authentication and Azure AI configuration
   useEffect(() => {
+    // Redirect to sign in if not authenticated
+    if (!isAuthenticated()) {
+      toast.error("Please sign in to access the chat");
+      navigate("/signin");
+      return;
+    }
+
+    // Check Azure configuration
     const config = getAzureAIConfig();
     setIsAzureConfigured(!!config);
-  }, []);
+    
+    if (!config) {
+      toast.warning("Please configure Azure AI settings to use the chat", {
+        duration: 5000,
+      });
+    }
+    
+    // Get user info and set welcome message
+    const user = getCurrentUser();
+    if (user) {
+      setMessages([
+        {
+          id: "1",
+          content: `Hello ${user.name || "there"}! I'm your LEXIA AI legal assistant. How can I help you with your legal questions today?`,
+          role: "assistant",
+          timestamp: new Date(),
+        },
+      ]);
+    }
+  }, [navigate]);
 
   const handleSendMessage = async (inputText: string) => {
     if (!inputText.trim()) return;
@@ -55,6 +85,9 @@ export default function Chat() {
     setLoading(true);
 
     try {
+      // Get user info for personalized context
+      const user = getCurrentUser();
+      
       // Format messages for Azure AI
       const promptMessages = messages
         .slice(-10) // Limit context window
@@ -68,7 +101,9 @@ export default function Chat() {
       if (!promptMessages.some(msg => msg.role === "system")) {
         promptMessages.unshift({
           role: "system",
-          content: "You are LEXIA, a legal assistant AI that provides helpful, accurate, and thoughtful information about legal topics."
+          content: `You are LEXIA, a legal assistant AI that provides helpful, accurate, and thoughtful information about legal topics. ${
+            user ? `You are speaking with ${user.name || 'a user'} (${user.email || 'authenticated user'}).` : ''
+          }`
         });
       }
 
