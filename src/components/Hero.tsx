@@ -15,7 +15,7 @@ export default function Hero() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center bg-black">
-      {/* Particles Background */}
+      {/* Main particles background */}
       <div className="absolute inset-0 w-full h-full z-0">
         <SparklesCore
           id="tsparticlesfullpage"
@@ -24,13 +24,13 @@ export default function Hero() {
           maxSize={1.4}
           particleDensity={100}
           className="w-full h-full"
-          particleColor="#8B5CF6" // Purple color instead of white
-          speed={0.8}
+          particleColor="#8B5CF6" // Purple color
+          speed={0.5}
         />
       </div>
       
-      {/* Additional background particles with different colors */}
-      <div className="absolute inset-0 w-full h-full z-0" style={{ opacity: 0.7 }}>
+      {/* Additional colorful background particles */}
+      <div className="absolute inset-0 w-full h-full z-0">
         <SparklesCore
           id="tsparticlesred"
           background="transparent"
@@ -39,11 +39,11 @@ export default function Hero() {
           particleDensity={40}
           className="w-full h-full"
           particleColor="#D946EF" // Pink
-          speed={0.5}
+          speed={0.3}
         />
       </div>
       
-      <div className="absolute inset-0 w-full h-full z-0" style={{ opacity: 0.6 }}>
+      <div className="absolute inset-0 w-full h-full z-0">
         <SparklesCore
           id="tsparticlesblue"
           background="transparent"
@@ -52,11 +52,11 @@ export default function Hero() {
           particleDensity={30}
           className="w-full h-full"
           particleColor="#0EA5E9" // Blue
-          speed={0.3}
+          speed={0.2}
         />
       </div>
       
-      <div className="absolute inset-0 w-full h-full z-0" style={{ opacity: 0.5 }}>
+      <div className="absolute inset-0 w-full h-full z-0">
         <SparklesCore
           id="tsparticlesorange"
           background="transparent"
@@ -69,7 +69,47 @@ export default function Hero() {
         />
       </div>
       
-      {/* Additional gradient overlay */}
+      {/* Additional colorful stars */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <SparklesCore
+          id="tsparticlesgreen"
+          background="transparent"
+          minSize={0.3}
+          maxSize={0.7}
+          particleDensity={25}
+          className="w-full h-full"
+          particleColor="#10B981" // Green
+          speed={0.35}
+        />
+      </div>
+      
+      <div className="absolute inset-0 w-full h-full z-0">
+        <SparklesCore
+          id="tsparticlesyellow"
+          background="transparent"
+          minSize={0.2}
+          maxSize={0.5}
+          particleDensity={15}
+          className="w-full h-full"
+          particleColor="#FBBF24" // Yellow
+          speed={0.25}
+        />
+      </div>
+      
+      <div className="absolute inset-0 w-full h-full z-0">
+        <SparklesCore
+          id="tsparticlesred"
+          background="transparent"
+          minSize={0.25}
+          maxSize={0.55}
+          particleDensity={20}
+          className="w-full h-full"
+          particleColor="#EF4444" // Red
+          speed={0.3}
+        />
+      </div>
+      
+      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/50 to-black/90 opacity-90 z-10"></div>
       
       {/* Main content */}
