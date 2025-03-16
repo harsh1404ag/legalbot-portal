@@ -33,10 +33,12 @@ export const storeQueryInAzure = async (
       return false;
     }
 
-    const { endpoint, apiKey } = config;
+    // Extract the base URL from the endpoint (removing any path components)
+    const endpointUrl = new URL(config.endpoint);
+    const baseApiUrl = `${endpointUrl.protocol}//${endpointUrl.host}`;
     
-    // Create a query storage endpoint - adjust this URL to match your Azure backend
-    const queryStorageUrl = `${endpoint}/queries`;
+    // Use the base URL for your Azure backend API
+    const queryStorageUrl = `${baseApiUrl}/api/queries`;
 
     const queryRecord: QueryRecord = {
       id: Date.now().toString(),
@@ -48,19 +50,20 @@ export const storeQueryInAzure = async (
       timestamp: new Date().toISOString()
     };
 
-    const response2 = await fetch(queryStorageUrl, {
+    const apiResponse = await fetch(queryStorageUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey,
+        'api-key': config.apiKey,
       },
       body: JSON.stringify(queryRecord),
     });
 
-    if (!response2.ok) {
-      throw new Error(`Failed to store query in Azure: ${response2.status}`);
+    if (!apiResponse.ok) {
+      throw new Error(`Failed to store query in Azure: ${apiResponse.status}`);
     }
 
+    console.log("Query successfully stored in Azure");
     return true;
   } catch (error) {
     console.error("Error storing query in Azure:", error);
@@ -83,16 +86,18 @@ export const getUserQueryHistory = async (limit: number = 20): Promise<QueryReco
       return [];
     }
 
-    const { endpoint, apiKey } = config;
+    // Extract the base URL from the endpoint (removing any path components)
+    const endpointUrl = new URL(config.endpoint);
+    const baseApiUrl = `${endpointUrl.protocol}//${endpointUrl.host}`;
     
-    // This URL should point to your Azure function/endpoint that retrieves user queries
-    const userQueriesUrl = `${endpoint}/queries/${user.id}?limit=${limit}`;
+    // Use the base URL for your Azure backend API
+    const userQueriesUrl = `${baseApiUrl}/api/queries/user/${user.id}?limit=${limit}`;
 
     const response = await fetch(userQueriesUrl, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey,
+        'api-key': config.apiKey,
       }
     });
 

@@ -4,6 +4,7 @@
  */
 
 import { getAzureAIConfig } from "./azure-ai-client";
+import { toast } from "sonner";
 
 interface AuthUser {
   id: string;
@@ -88,10 +89,12 @@ export const signInWithGoogle = async (): Promise<AuthUser> => {
 
 // Store user data in Azure
 const storeUserInAzure = async (user: AuthUser, azureConfig: any): Promise<void> => {
-  const { endpoint, apiKey } = azureConfig;
+  // Extract the base URL from the endpoint (removing any path components)
+  const endpointUrl = new URL(azureConfig.endpoint);
+  const baseApiUrl = `${endpointUrl.protocol}//${endpointUrl.host}`;
   
   // Create a user storage endpoint - this URL should be adjusted to match your Azure backend
-  const userStorageUrl = `${endpoint}/users`;
+  const userStorageUrl = `${baseApiUrl}/api/users`;
 
   try {
     // Check if the user already exists
@@ -99,7 +102,7 @@ const storeUserInAzure = async (user: AuthUser, azureConfig: any): Promise<void>
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'api-key': apiKey,
+        'api-key': azureConfig.apiKey,
       },
     });
     
@@ -109,7 +112,7 @@ const storeUserInAzure = async (user: AuthUser, azureConfig: any): Promise<void>
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': apiKey,
+          'api-key': azureConfig.apiKey,
         },
         body: JSON.stringify({
           ...user,
@@ -120,13 +123,15 @@ const storeUserInAzure = async (user: AuthUser, azureConfig: any): Promise<void>
       if (!response.ok) {
         throw new Error(`Failed to update user in Azure: ${response.status}`);
       }
+      
+      console.log("User data updated in Azure");
     } else {
       // If the user doesn't exist, create a new record
       const response = await fetch(userStorageUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'api-key': apiKey,
+          'api-key': azureConfig.apiKey,
         },
         body: JSON.stringify({
           ...user,
@@ -138,9 +143,12 @@ const storeUserInAzure = async (user: AuthUser, azureConfig: any): Promise<void>
       if (!response.ok) {
         throw new Error(`Failed to store user in Azure: ${response.status}`);
       }
+      
+      console.log("New user created in Azure");
     }
   } catch (error) {
     console.error("Error storing user in Azure:", error);
+    toast.error("Error connecting to Azure backend");
     throw error;
   }
 };
