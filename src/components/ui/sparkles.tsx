@@ -120,7 +120,7 @@ export const SparklesCore = (props: ParticlesProps) => {
               number: {
                 density: {
                   enable: true,
-                  area: particleDensity || 80,  // Changed 'value' to 'area'
+                  value: particleDensity || 80,  // Using 'value' instead of 'area'
                 },
                 value: particleDensity || 80,
               },
@@ -132,7 +132,7 @@ export const SparklesCore = (props: ParticlesProps) => {
                 animation: {
                   enable: true,
                   speed: speed || 1,
-                  min: 0.1, // Changed 'minimumValue' to 'min'
+                  minimumValue: 0.1, // Using 'minimumValue' instead of 'min'
                 },
               },
               shape: {

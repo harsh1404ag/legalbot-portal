@@ -8,6 +8,7 @@ import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { BackgroundParticles } from "@/components/chat/BackgroundParticles";
 import { getAzureAIConfig, sendMessageToAzureAI } from "@/lib/azure-ai-client";
 import { isAuthenticated, getCurrentUser } from "@/lib/auth-service";
+import { storeQueryInAzure } from "@/lib/query-storage-service";
 import { toast } from "sonner";
 
 interface Message {
@@ -117,6 +118,9 @@ export default function Chat() {
         role: "assistant",
         timestamp: new Date(),
       };
+
+      // Store the query and response in Azure
+      await storeQueryInAzure(inputText, aiResponse);
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {

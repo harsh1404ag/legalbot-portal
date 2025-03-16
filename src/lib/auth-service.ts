@@ -90,21 +90,54 @@ export const signInWithGoogle = async (): Promise<AuthUser> => {
 const storeUserInAzure = async (user: AuthUser, azureConfig: any): Promise<void> => {
   const { endpoint, apiKey } = azureConfig;
   
-  // Create a user storage endpoint - adjust this to match your actual Azure backend endpoint
+  // Create a user storage endpoint - this URL should be adjusted to match your Azure backend
   const userStorageUrl = `${endpoint}/users`;
 
   try {
-    const response = await fetch(userStorageUrl, {
-      method: 'POST',
+    // Check if the user already exists
+    const checkResponse = await fetch(`${userStorageUrl}/${user.id}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'api-key': apiKey,
       },
-      body: JSON.stringify(user),
     });
+    
+    // If the user exists, update their data
+    if (checkResponse.ok) {
+      const response = await fetch(`${userStorageUrl}/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': apiKey,
+        },
+        body: JSON.stringify({
+          ...user,
+          lastLogin: new Date().toISOString()
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to store user in Azure: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`Failed to update user in Azure: ${response.status}`);
+      }
+    } else {
+      // If the user doesn't exist, create a new record
+      const response = await fetch(userStorageUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': apiKey,
+        },
+        body: JSON.stringify({
+          ...user,
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to store user in Azure: ${response.status}`);
+      }
     }
   } catch (error) {
     console.error("Error storing user in Azure:", error);

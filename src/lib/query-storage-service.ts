@@ -1,0 +1,109 @@
+
+/**
+ * Service for storing user queries in Azure
+ */
+
+import { getAzureAIConfig } from "./azure-ai-client";
+import { getCurrentUser } from "./auth-service";
+
+interface QueryRecord {
+  id: string;
+  userId: string;
+  userEmail: string | null;
+  userName: string | null;
+  query: string;
+  response: string;
+  timestamp: string;
+}
+
+export const storeQueryInAzure = async (
+  query: string, 
+  response: string
+): Promise<boolean> => {
+  try {
+    const user = getCurrentUser();
+    if (!user) {
+      console.error("Cannot store query: User not authenticated");
+      return false;
+    }
+
+    const config = getAzureAIConfig();
+    if (!config) {
+      console.error("Cannot store query: Azure AI not configured");
+      return false;
+    }
+
+    const { endpoint, apiKey } = config;
+    
+    // Create a query storage endpoint - adjust this URL to match your Azure backend
+    const queryStorageUrl = `${endpoint}/queries`;
+
+    const queryRecord: QueryRecord = {
+      id: Date.now().toString(),
+      userId: user.id,
+      userEmail: user.email,
+      userName: user.name,
+      query,
+      response,
+      timestamp: new Date().toISOString()
+    };
+
+    const response2 = await fetch(queryStorageUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': apiKey,
+      },
+      body: JSON.stringify(queryRecord),
+    });
+
+    if (!response2.ok) {
+      throw new Error(`Failed to store query in Azure: ${response2.status}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error storing query in Azure:", error);
+    return false;
+  }
+};
+
+// Retrieve user's query history
+export const getUserQueryHistory = async (limit: number = 20): Promise<QueryRecord[]> => {
+  try {
+    const user = getCurrentUser();
+    if (!user) {
+      console.error("Cannot retrieve queries: User not authenticated");
+      return [];
+    }
+
+    const config = getAzureAIConfig();
+    if (!config) {
+      console.error("Cannot retrieve queries: Azure AI not configured");
+      return [];
+    }
+
+    const { endpoint, apiKey } = config;
+    
+    // This URL should point to your Azure function/endpoint that retrieves user queries
+    const userQueriesUrl = `${endpoint}/queries/${user.id}?limit=${limit}`;
+
+    const response = await fetch(userQueriesUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': apiKey,
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to retrieve queries from Azure: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data as QueryRecord[];
+  } catch (error) {
+    console.error("Error retrieving queries from Azure:", error);
+    return [];
+  }
+};
