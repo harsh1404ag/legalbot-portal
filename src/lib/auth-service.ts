@@ -6,7 +6,7 @@
 import { getAzureAIConfig } from "./azure-ai-client";
 import { toast } from "sonner";
 
-interface AuthUser {
+export interface AuthUser {
   id: string;
   name: string | null;
   email: string | null;
@@ -93,7 +93,7 @@ const storeUserInAzure = async (user: AuthUser, azureConfig: any): Promise<void>
   const endpointUrl = new URL(azureConfig.endpoint);
   const baseApiUrl = `${endpointUrl.protocol}//${endpointUrl.host}`;
   
-  // Create a user storage endpoint - this URL should be adjusted to match your Azure backend
+  // Create a user storage endpoint - use /api prefix for Azure Functions
   const userStorageUrl = `${baseApiUrl}/api/users`;
 
   try {

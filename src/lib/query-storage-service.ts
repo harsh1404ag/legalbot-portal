@@ -6,7 +6,7 @@
 import { getAzureAIConfig } from "./azure-ai-client";
 import { getCurrentUser } from "./auth-service";
 
-interface QueryRecord {
+export interface QueryRecord {
   id: string;
   userId: string;
   userEmail: string | null;
@@ -37,7 +37,7 @@ export const storeQueryInAzure = async (
     const endpointUrl = new URL(config.endpoint);
     const baseApiUrl = `${endpointUrl.protocol}//${endpointUrl.host}`;
     
-    // Use the base URL for your Azure backend API
+    // Use the base URL for your Azure backend API - use /api prefix for Azure Functions
     const queryStorageUrl = `${baseApiUrl}/api/queries`;
 
     const queryRecord: QueryRecord = {
@@ -90,7 +90,7 @@ export const getUserQueryHistory = async (limit: number = 20): Promise<QueryReco
     const endpointUrl = new URL(config.endpoint);
     const baseApiUrl = `${endpointUrl.protocol}//${endpointUrl.host}`;
     
-    // Use the base URL for your Azure backend API
+    // Use the base URL for your Azure backend API - use /api prefix for Azure Functions
     const userQueriesUrl = `${baseApiUrl}/api/queries/user/${user.id}?limit=${limit}`;
 
     const response = await fetch(userQueriesUrl, {
